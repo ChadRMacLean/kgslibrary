@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library</title>
+
+    <link rel="stylesheet" href="styles/main.css">
+    <script src="scripts/detector.js" type="module" defer></script>
+    <script type="module" src="scripts/user.js"></script>
+
+    <!-- External Resources -->
+    <link rel="stylesheet" href="https://unpkg.com/flickity@2/dist/flickity.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@undecaf/zbar-wasm@0.9.15/dist/index.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@undecaf/barcode-detector-polyfill@0.9.20/dist/index.js"></script>
+
+</head>
+<body>
+    <nav>
+        <ul>
+            <li><a href="#">Home</a></li>
+            <li><a href="#">List</a></li>
+            <li><a href="#">Add Books</a></li>
+        </ul>
+    </nav>
+
+    <header>
+        <div class="card recently-added">
+            <h3>Recently Added</h3>
+            <div class="main-carousel"></div>
+        </div>
+    </header>
+
+    <main>
+        <div id="barcodeScanner" class="card">
+            <h3>Image Source</h3>
+
+            <button id="videoBtn">Camera</button>
+
+            <input id="fileInput" type="file" style="display: none;" accept="image/*">
+            <input id="imgUrl" type="url" placeholder="Paste an image URL then click outside" required style="display: none;">
+            
+            <div id="viewport">
+                <img id="barcodeImage" crossorigin="anonymous">
+                <canvas id="canvas"></canvas>
+                <video id="video" muted autoplay playsinline></video>
+            </div>
+        </div>
+
+        <div id="newBookDialogue" class="card">
+            <h3>Title</h3>
+            <h4>Author</h4>
+            <div class="coverArtLarge"></div>
+
+            <div id="acceptScannedBook">
+                <p>Does this information look correct?</p>
+                <button id="acceptBook">Yes</button>
+                <button id="rejectBook">No</button>
+            </div>
+
+            <div id="keepScanningBooks">
+                <p>Would you like to scan another book?</p>
+                <button id="continueScanning">Yes</button>
+                <button id="cancelScanning">No</button>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

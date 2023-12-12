@@ -1,0 +1,130 @@
+{
+    "numFound": 1,
+    "start": 0,
+    "numFoundExact": true,
+    "docs": [
+        {
+            "key": "/works/OL25804997W",
+            "type": "work",
+            "seed": [
+                "/books/OL37998099M",
+                "/books/OL37579757M",
+                "/books/OL36375684M",
+                "/books/OL34790180M",
+                "/books/OL48333790M",
+                "/books/OL39955075M",
+                "/works/OL25804997W",
+                "/subjects/east_indian_american_women",
+                "/subjects/fiction",
+                "/subjects/immigrants",
+                "/subjects/friendship",
+                "/subjects/lesbians",
+                "/authors/OL9761624A"
+            ],
+            "title": "All This Could Be Different",
+            "title_suggest": "All This Could Be Different",
+            "title_sort": "All This Could Be Different",
+            "edition_count": 6,
+            "edition_key": [
+                "OL37998099M",
+                "OL37579757M",
+                "OL36375684M",
+                "OL34790180M",
+                "OL48333790M",
+                "OL39955075M"
+            ],
+            "publish_date": [
+                "2023",
+                "2022"
+            ],
+            "publish_year": [
+                2022,
+                2023
+            ],
+            "first_publish_year": 2022,
+            "lccn": [
+                "2021052494"
+            ],
+            "oclc": [
+                "1281786824"
+            ],
+            "lcc": [
+                "PS-3613.00000000.A8274A78 2022",
+                "PS-3613.00000000.A8274 A78 2022"
+            ],
+            "isbn": [
+                "9780593489123",
+                "1474624790",
+                "9781474624794",
+                "0593489128",
+                "1474624782",
+                "9781474624787",
+                "9780593607596",
+                "0593607597",
+                "9781474624770",
+                "9780593489147",
+                "0593489144",
+                "1474624774"
+            ],
+            "last_modified_i": 1690399942,
+            "ebook_count_i": 0,
+            "ebook_access": "no_ebook",
+            "has_fulltext": false,
+            "public_scan_b": false,
+            "readinglog_count": 8,
+            "want_to_read_count": 7,
+            "currently_reading_count": 0,
+            "already_read_count": 1,
+            "cover_edition_key": "OL36375684M",
+            "cover_i": 12837486,
+            "publisher": [
+                "Penguin Publishing Group",
+                "Orion Publishing Group, Limited",
+                "Diversified Publishing"
+            ],
+            "language": [
+                "eng"
+            ],
+            "author_key": [
+                "OL9761624A"
+            ],
+            "author_name": [
+                "Sarah Thankam Mathews"
+            ],
+            "subject": [
+                "East Indian American women",
+                "Fiction",
+                "Immigrants",
+                "Friendship",
+                "Lesbians"
+            ],
+            "publisher_facet": [
+                "Diversified Publishing",
+                "Orion Publishing Group, Limited",
+                "Penguin Publishing Group"
+            ],
+            "subject_facet": [
+                "East Indian American women",
+                "Fiction",
+                "Friendship",
+                "Immigrants",
+                "Lesbians"
+            ],
+            "_version_": 1772512814133411800,
+            "lcc_sort": "PS-3613.00000000.A8274 A78 2022",
+            "author_facet": [
+                "OL9761624A Sarah Thankam Mathews"
+            ],
+            "subject_key": [
+                "east_indian_american_women",
+                "fiction",
+                "friendship",
+                "immigrants",
+                "lesbians"
+            ]
+        }
+    ],
+    "num_found": 1,
+    "q": "",
+    "offset": null
+}
