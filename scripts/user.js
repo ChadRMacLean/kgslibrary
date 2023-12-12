@@ -1,5 +1,5 @@
 import { detector } from './detector.js';
-import { get_book_cover } from './ol.js';
+import { get_book_data, get_book_cover } from './ol.js';
 
 const barcode_scanner_container = document.querySelector("#barcodeScanner");
 
@@ -17,6 +17,7 @@ const keep_scanning_actions_container = new_book_dialogue_container.querySelecto
 const continue_scanning_button = keep_scanning_actions_container.querySelector("button#continueScanning");
 const cancel_scanning_button = keep_scanning_actions_container.querySelector("button#cancelScanning");
 
+let book_data = undefined;
 let cover_image = undefined;
 
 /**
@@ -24,15 +25,14 @@ let cover_image = undefined;
  * @param {object} book_data 
  * @param {string} cover_image_src 
  */
-export async function display_new_book_confirmation(book_data, cover_image_src) {
+export async function display_new_book_confirmation(book_isbn) {
     reset_new_book_confirmation();
 
-    book_data = book_data.docs[0];
+    new Promise(async () => {
+        book_data = await get_book_data('isbn', book_isbn);
+        book_data = book_data.docs[0];
 
-    const book_isbn = book_data.isbn[0];
-
-    new Promise(async (res, rej) => {
-        cover_image = cover_image_src || await get_book_cover('isbn', book_isbn, 'L');
+        cover_image = await get_book_cover('isbn', book_isbn, 'L');
 
         if (typeof cover_image == 'string') {
             cover_image = document.createElement('img');
@@ -46,35 +46,37 @@ export async function display_new_book_confirmation(book_data, cover_image_src) 
         cover_image_element.append(cover_image);
         
         cover_image_element.style.display = "block";
-    });
+        
+        title_header.innerText = book_data.title;
+        author_header.innerText = book_data.author_name;
 
-    title_header.innerText = book_data.title;
-    author_header.innerText = book_data.author_name;
+        barcode_scanner_container.style.display = 'none';
+        
+        new_book_dialogue_container.style.display = 'block';
+        accept_book_actions_container.style.display = 'block';
 
-    barcode_scanner_container.style.display = 'none';
-    
-    new_book_dialogue_container.style.display = 'block';
-    accept_book_actions_container.style.display = 'block';
+        accept_book_button.addEventListener('click', event => {
+            // Add book to local storage.
+            // Ask to continue scanning.
+            keep_scanning_actions_container.style.display = 'block';
+            accept_book_actions_container.style.display = 'none';
+        })
 
-    accept_book_button.addEventListener('click', event => {
-        console.log("Adding book.");
-        // Add book to local storage.
-    })
+        reject_book_button.addEventListener('click', event => {
+            keep_scanning_actions_container.style.display = 'block';
+            accept_book_actions_container.style.display = 'none';
+        });
 
-    reject_book_button.addEventListener('click', event => {
-        keep_scanning_actions_container.style.display = 'block';
-        accept_book_actions_container.style.display = 'none';
-    });
+        continue_scanning_button.addEventListener('click', event => {
+            detector.toggle_user_media();
+            new_book_dialogue_container.style.display = 'none';
+            barcode_scanner_container.style.display = 'block';
+        });
 
-    continue_scanning_button.addEventListener('click', event => {
-        detector.toggle_user_media();
-        new_book_dialogue_container.style.display = 'none';
-        barcode_scanner_container.style.display = 'block';
-    });
-
-    cancel_scanning_button.addEventListener('click', event => {
-        new_book_dialogue_container.style.display = 'none';
-        barcode_scanner_container.style.display = 'block';
+        cancel_scanning_button.addEventListener('click', event => {
+            new_book_dialogue_container.style.display = 'none';
+            barcode_scanner_container.style.display = 'block';
+        });
     });
 }
 

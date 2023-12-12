@@ -1,5 +1,5 @@
 import { get_book_data } from './ol.js';
-import { test_display_new_book_information } from '../tests/test_display_new_book.js';
+import { display_new_book_confirmation } from './user.js';
 
 class Detector {
 
@@ -110,7 +110,7 @@ class Detector {
                         // Show new book data window.
                         // Confirm with user information is correct. If yes, add data to local storage/db
                         this.toggle_user_media();
-                        test_display_new_book_information();
+                        display_new_book_confirmation(symbol.rawValue);
                     }
                 });
             }          

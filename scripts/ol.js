@@ -12,7 +12,7 @@ export async function get_book_cover(type, value, size) {
 export async function get_book_data(type, value) {
     let ol_book_data_api = `https://openlibrary.org/search.json?${type}=${value}`;
 
-    return await fetch(ol_book_data_api).then(response => response.json()).then(data => { return data });
+    return await fetch(ol_book_data_api).then(response => response.json());
 }
 
 // https://covers.openlibrary.org/b/isbn/9780593489147-L.jpg?default=false
