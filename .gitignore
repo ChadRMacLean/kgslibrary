@@ -1,1 +1,7 @@
-scripts/main.js
+.env
+
+certificates
+node_modules
+package.json
+
+public/scripts/main.js

@@ -1,26 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Library</title>
-
-    <link rel="stylesheet" href="styles/main.css">
-    <script src="scripts/detector.js" type="module" defer></script>
-    <script type="module" src="scripts/user.js"></script>
-
-    <!-- External Resources -->
-    <link rel="stylesheet" href="https://unpkg.com/flickity@2/dist/flickity.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/@undecaf/zbar-wasm@0.9.15/dist/index.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@undecaf/barcode-detector-polyfill@0.9.20/dist/index.js"></script>
-
-</head>
 <body>
     <nav>
         <ul>
-            <li><a href="#">Home</a></li>
-            <li><a href="#">List</a></li>
-            <li><a href="#">Add Books</a></li>
+            <li><a href="/">Home</a></li>
+            <li><a href="/browse">Browse</a></li>
+            <li><a href="/add">Add Books</a></li>
         </ul>
     </nav>
 
@@ -40,6 +23,8 @@
             <input id="fileInput" type="file" style="display: none;" accept="image/*">
             <input id="imgUrl" type="url" placeholder="Paste an image URL then click outside" required style="display: none;">
             
+            <div id="mobile_reader"></div>
+
             <div id="viewport">
                 <img id="barcodeImage" crossorigin="anonymous">
                 <canvas id="canvas"></canvas>
@@ -65,5 +50,11 @@
             </div>
         </div>
     </main>
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/@undecaf/zbar-wasm@0.9.15/dist/index.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@undecaf/barcode-detector-polyfill@0.9.20/dist/index.js"></script>
+    <script src="https://unpkg.com/html5-qrcode@2.3.4/html5-qrcode.min.js"></script>
+    <script type="module" src="scripts/bookScanner.js"></script>
+    <script type="module" src="scripts/userInteractionUI.js"></script>
 </body>
-</html>

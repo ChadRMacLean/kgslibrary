@@ -58,7 +58,7 @@ main {
 }
 
 .card {
-  width: 25vw;
+  width: 35vw;
   border: 2px solid var(--02dp);
   padding: 1rem 2rem;
   margin: .5rem 0 .5rem 0;
@@ -66,10 +66,12 @@ main {
 
 #newBookDialogue.card {
   display: none;
+  text-align: center;
 }
 
-#newBookDialogue .coverArtLarge {
-  overflow-y: wrap;
+#newBookDialogue .coverArtLarge img {
+  max-width: 100%;
+  height: auto;
 }
 
 #newBookDialogue .userActionBtns {
@@ -106,7 +108,7 @@ main {
 #viewport {
   display: none;
   position: relative;
-  margin-top: 1rem;
+  margin-top: 0;
 }
 
 #canvas {
@@ -117,11 +119,12 @@ main {
   height: 100%;
 }
 
-video {
+#video, #mobile_reader {
   max-width: 100%;
   border: 2px solid var(--02dp);
 }
 
+#mobile_reader { display: none; }
 
 
 

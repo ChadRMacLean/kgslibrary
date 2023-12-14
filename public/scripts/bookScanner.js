@@ -1,13 +1,16 @@
-import { get_book_data } from './ol.js';
-import { display_new_book_confirmation } from './user.js';
+import { get_book_data } from './apiHandler.js';
+import { display_new_book_confirmation } from './userInteractionUI.js';
 
 class Detector {
 
     constructor() { 
         try {
             window['BarcodeDetector'].getSupportedFormats();
+            this.is_mobile = true;
+
         } catch {
             window['BarcodeDetector'] = barcodeDetectorPolyfill.BarcodeDetectorPolyfill;
+            this.is_mobile = false;
         }
 
         this.active = false;
@@ -27,17 +30,22 @@ class Detector {
         this.canvas = document.querySelector("#canvas");
         this.ctx = this.canvas.getContext('2d');
 
+        this.mobile_reader = document.querySelector("#mobile_reader");
+
         this.viewport_container = document.querySelector("#viewport");
         this.video_container = document.querySelector("#video");
         this.camera_button = document.querySelector("#videoBtn");
         this.barcode_image = document.querySelector("img#barcodeImage");
 
         this.available_formats = await this.get_formats();
-        this.detector = new BarcodeDetector({ formats: this.available_formats });
 
-        this.camera_button.addEventListener('click', () => {
-            this.toggle_user_media();
-        });
+        if (this.is_mobile) {
+            this.detector = new Html5QrcodeScanner('mobile_reader', { fps: 10 }, false);
+        } else {
+            this.detector = new BarcodeDetector({ formats: this.available_formats });
+        }
+
+        this.camera_button.addEventListener('click', () => this.toggle_user_media());
     }
 
     async get_formats() {
@@ -47,7 +55,7 @@ class Detector {
     }
 
     async toggle_user_media() {
-        if (!this.active) {
+        if (!this.active && !this.is_mobile) {
             this.viewport_container.style.display = 'block';
 
             navigator.mediaDevices.getUserMedia({ audio: false, video: { facingMode: 'environment' } })
@@ -56,7 +64,7 @@ class Detector {
 
             this.active = true;
             this.detect_video(true);
-        } else {
+        } else if (this.active && !this.is_mobile) {
             this.video_container.srcObject.getTracks().forEach(track => {
                 if (track.readyState == 'live' && track.kind ==='video') {
                     track.stop();
@@ -68,7 +76,27 @@ class Detector {
             this.active = false;
             this.video_container.srcObject = undefined;
             this.viewport_container.style.display = 'none';
-        }        
+        }
+        
+        if (!this.active && this.is_mobile) {
+            this.camera_button.style.display = 'none';
+            this.mobile_reader.style.display = 'block';
+
+            this.detector.render(
+                (decoded_text, decoded_result) => {
+                    display_new_book_confirmation(decoded_text);
+                    this.detector.pause();
+                    this.detector.clear();
+                }, (error) => {}
+            )
+
+            this.camera_button.style.display = 'block'
+
+            this.active = true;
+        } else if(this.active && this.is_mobile) {
+            this.active = false;
+            this.mobile_reader.style.display = 'none';
+        }
     }
 
     display_detection_rect(source, symbols) {
@@ -115,6 +143,10 @@ class Detector {
                 });
             }          
         });
+    }
+
+    mobile_detect_success() {
+        this.toggle_user_media();
     }
 
     lookup_book_data(barcode) {
