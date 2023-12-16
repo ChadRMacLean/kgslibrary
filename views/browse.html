@@ -7,14 +7,69 @@
         </ul>
     </nav>
 
-    <header>
+    <main>
         <div class="card recently-added">
             <h3>Recently Added</h3>
             <div class="main-carousel"></div>
         </div>
-    </header>
-
-    <main>
-        <h3>HELLO</h3>
     </main>
+
+    <script src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js"></script>
+
+    <script>
+        let flkt = null;
+
+        const main_carousel = document.querySelector('.main-carousel');
+        const recently_added = document.querySelector(".recently-added");
+
+        new Promise(async (resolve, reject) => {
+
+            const response = await fetch('/browse/all');
+            const all_owned_books = await response.json();
+
+            all_owned_books.forEach(book => {
+                if (!book.medium) return;
+
+                const carousel_cell = document.createElement("div");
+                const book_data_container = document.createElement('div');
+
+                book_data_container.classList.add('book_data');
+                book_data_container.innerHTML = `<h4>${book.title}</h4><p>${book.isbn}</p>`;
+
+                const cover_image = new Image();
+                cover_image.src = book.medium;
+
+                carousel_cell.classList.add("carousel-cell");
+                carousel_cell.append(cover_image);
+                carousel_cell.append(book_data_container);
+
+                main_carousel.append(carousel_cell);
+            });
+
+            if (!flkt) {
+                flkt = new Flickity('.main-carousel', {
+                    cellAlign: 'left',
+                    contain: 'true',
+                    wrapAround: 'true'
+                });
+            }
+
+            // if (flkt == null) {
+            //     flkt = new Flickity(".main-carousel", {
+            //         cellAlign: 'left',
+            //         contain: true,
+            //         draggable: '>1',
+            //         prevNextButtons: true,
+            //         pageDots: false,
+            //         wrapAround: true,
+            //         selectedAttraction: 0.1,
+            //         friction: 0.8
+            //     });
+
+            //     recently_added.style.display = "block";
+            // }
+
+            // flkt.reloadCells();
+        });
+    </script>
 </body>

@@ -57,6 +57,7 @@ class Detector {
     async toggle_user_media() {
         if (!this.active && !this.is_mobile) {
             this.viewport_container.style.display = 'block';
+            this.camera_button.textContent = "Disable Camera";
 
             navigator.mediaDevices.getUserMedia({ audio: false, video: { facingMode: 'environment' } })
                 .then(stream => this.video_container.srcObject = stream)
@@ -79,8 +80,8 @@ class Detector {
         }
         
         if (!this.active && this.is_mobile) {
-            this.camera_button.style.display = 'none';
             this.mobile_reader.style.display = 'block';
+            this.camera_button.textContent = "Disable Camera";
 
             this.detector.render(
                 (decoded_text, decoded_result) => {
@@ -88,14 +89,15 @@ class Detector {
                     this.detector.pause();
                     this.detector.clear();
                 }, (error) => {}
-            )
-
-            this.camera_button.style.display = 'block'
+            );
 
             this.active = true;
         } else if(this.active && this.is_mobile) {
             this.active = false;
             this.mobile_reader.style.display = 'none';
+            this.camera_button.textContent = "Enable Camera";
+            this.detector.pause();
+            this.detector.clear();
         }
     }
 

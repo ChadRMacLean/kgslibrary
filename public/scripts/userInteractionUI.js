@@ -19,47 +19,50 @@ const continue_scanning_button = keep_scanning_actions_container.querySelector("
 const cancel_scanning_button = keep_scanning_actions_container.querySelector("button#cancelScanning");
 
 let book_data = undefined;
-let cover_image = undefined;
 
 let post_data = {};
 
 /**
  * 
- * @param {object} book_data 
- * @param {string} cover_image_src 
+ * @param {number} book_isbn 
  */
 export async function display_new_book_confirmation(book_isbn) {
     reset_new_book_confirmation();
 
     new Promise(async () => {
-        book_data = await get_book_data('isbn', book_isbn)
-        .then(data => {
+        post_data = {
+            title: undefined,
+            isbn: undefined,
+            cover_sources: {
+                medium: undefined,
+                large: undefined
+            }
+        };
+
+        await get_book_data('isbn', book_isbn).then(data => {
             book_data = data.docs[0];
 
             title_header.innerText = book_data.title;
             author_header.innerText = book_data.author_name;
 
-            post_data = {
-                title: book_data.title,
-                isbn: book_isbn
-            };
+            post_data.title = book_data.title;
+            post_data.isbn = book_isbn;
         })
         .catch (error => {
             title_header.innerText = 'Unknown Title';
             author_header.innerText = 'Unknown Author';
         });
 
-        cover_image = await get_book_cover('isbn', book_isbn, 'L')
-        .then((image) => {
+        await get_book_cover('isbn', book_isbn, 'L').then((image) => {
+            cover_image_element.style.display = "block";
             cover_image_element.style.width = image.width;
             cover_image_element.style.height = image.height;
-            
             cover_image_element.append(image);
-            
-            cover_image_element.style.display = "block";
-        })
-        .catch(error => { 
-            console.log(error, 'Could not load book cover.') 
+
+            post_data.cover_sources.large = image.src;
+        }).catch((error) => {
+            cover_image_element.textContent = 'No cover image available.';
+            cover_image_element.style.display = 'block';
         });
 
         barcode_scanner_container.style.display = 'none';
@@ -68,11 +71,16 @@ export async function display_new_book_confirmation(book_isbn) {
         accept_book_actions_container.style.display = 'block';
     });
 
-    accept_book_button.addEventListener('click', () => {
-        // Add book to db.
+    accept_book_button.addEventListener('click', async () => {
+        await(get_book_cover('isbn', book_isbn, 'M', true))
+        .then(response => post_data.cover_sources.medium = response)
+        .catch(error => {});
+        
         fetch('/add/book', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(post_data) })
         .then(response => response.json())
-        .then(data => console.log('Server response:', data));
+        .then(data => {
+            console.log('Server response:', data);
+        });
 
         // Ask to continue scanning.
         keep_scanning_actions_container.style.display = 'block';
@@ -93,6 +101,9 @@ export async function display_new_book_confirmation(book_isbn) {
     cancel_scanning_button.addEventListener('click', () => {
         new_book_dialogue_container.style.display = 'none';
         barcode_scanner_container.style.display = 'block';
+
+        const camera_button = document.querySelector("#videoBtn");
+        camera_button.textContent = "Enable Camera";
     }, { once: true });
 }
 
@@ -101,9 +112,9 @@ function reset_new_book_confirmation() {
     
     title_header.innerText = 'Title';
     author_header.innerText = 'Author';
+    cover_image_element.textContent = '';
 
     book_data = undefined;
-    cover_image = undefined;
     post_data = undefined;
 
     if (cover_image_element.querySelector('img')) cover_image_element.removeChild(cover_image_element.querySelector('img'));
