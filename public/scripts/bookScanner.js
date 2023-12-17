@@ -1,4 +1,3 @@
-import { get_book_data } from './apiHandler.js';
 import { display_new_book_confirmation } from './userInteractionUI.js';
 
 class Detector {
@@ -146,15 +145,6 @@ class Detector {
             }          
         });
     }
-
-    mobile_detect_success() {
-        this.toggle_user_media();
-    }
-
-    lookup_book_data(barcode) {
-        get_book_data('isbn', barcode);
-    }
-
 }
 
 export const detector = new Detector();

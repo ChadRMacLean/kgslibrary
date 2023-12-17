@@ -5,8 +5,10 @@ const body_parser = require('body-parser');
 const path = require('path');
 const https = require('https');
 const fs = require('fs');
+const axios = require('axios');
 
 const { get_all_books, add_book } = require('./database/storageController.js');
+const { get_book_data, get_book_cover } = require('./api/apiHandler.js');
 
 const app = express();
 const port = 3000;
@@ -32,6 +34,27 @@ app.get('/browse', (req, res) => {
 app.get('/browse/all', async (req, res) => {
     const book_data = await get_all_books();
     res.send(book_data);
+});
+
+app.get('/books/isbn/:isbn', async (req, res) => {
+    res.send(await get_book_data(req.params.isbn));
+});
+
+app.get('/books/isbn/:isbn/covers/:size', async (req, res) => {
+    const image_source = await get_book_cover(req.params.isbn, req.params.size);
+
+    const response = await axios.get(image_source, { responseType: 'arraybuffer' });
+
+    try {
+        res.writeHead(200, {
+            'Content-Type': response.headers['content-type'],
+            'Content-Length': response.headers['content-length'],
+        });
+        res.end(response.data, 'binary');
+    } catch (error) {
+        console.error('Error fetching image:', error.message);
+        res.status(500).send('Internal Server Error');
+    }
 });
 
 app.get('/add', (req, res) => {

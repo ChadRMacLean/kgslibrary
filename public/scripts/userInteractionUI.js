@@ -1,5 +1,3 @@
-// import { add_book } from './storageController.js';
-import { get_book_data, get_book_cover } from './apiHandler.js';
 import { detector } from './bookScanner.js';
 
 const barcode_scanner_container = document.querySelector("#barcodeScanner");
@@ -24,42 +22,49 @@ let post_data = {};
 
 /**
  * 
- * @param {number} book_isbn 
+ * @param {string} isbn 
  */
-export async function display_new_book_confirmation(book_isbn) {
+export async function display_new_book_confirmation(isbn) {
     reset_new_book_confirmation();
 
     new Promise(async () => {
         post_data = {
             title: undefined,
             isbn: undefined,
-            cover_sources: {
-                medium: undefined,
-                large: undefined
-            }
+            thumbnail_source: undefined
         };
 
-        await get_book_data('isbn', book_isbn).then(data => {
-            book_data = data.docs[0];
-
+        await fetch(`/books/isbn/${isbn}`).then(response => {
+            if (response.ok) return response.json();
+            throw new Error(`Unable to fetch book data. Status: ${response.status}`);
+        }).then(book_data => {
             title_header.innerText = book_data.title;
-            author_header.innerText = book_data.author_name;
+            author_header.innerText = book_data.authors[0];
 
             post_data.title = book_data.title;
-            post_data.isbn = book_isbn;
-        })
-        .catch (error => {
+            post_data.isbn = isbn;
+        }).catch (error => {
             title_header.innerText = 'Unknown Title';
             author_header.innerText = 'Unknown Author';
         });
 
-        await get_book_cover('isbn', book_isbn, 'L').then((image) => {
-            cover_image_element.style.display = "block";
-            cover_image_element.style.width = image.width;
-            cover_image_element.style.height = image.height;
-            cover_image_element.append(image);
+        new Promise(async (resolve, reject) => {
+            await fetch(`/books/isbn/${isbn}/covers/medium`).then((response) => {
+                if (response.ok) return response.url;
+                throw new Error(`Unable to fetch image at ${response.url}. Status: ${response.status}`);
+            }).then(image_source => {
+                const image = new Image();
+                image.onload = () => resolve(image);
+                image.onerror = (error) => reject(error);
+                image.src = image_source;
 
-            post_data.cover_sources.large = image.src;
+                cover_image_element.style.display = "block";
+                // cover_image_element.style.width = image.width;
+                // cover_image_element.style.height = image.height;
+                cover_image_element.append(image);
+
+                post_data.thumbnail_source = image.src;
+            }).catch(error => reject(error));
         }).catch((error) => {
             cover_image_element.textContent = 'No cover image available.';
             cover_image_element.style.display = 'block';
@@ -72,10 +77,10 @@ export async function display_new_book_confirmation(book_isbn) {
     });
 
     accept_book_button.addEventListener('click', async () => {
-        await(get_book_cover('isbn', book_isbn, 'M', true))
-        .then(response => post_data.cover_sources.medium = response)
-        .catch(error => {});
-        
+        // await(get_book_cover('isbn', book_isbn, 'M', true))
+        // .then(response => post_data.cover_sources.medium = response)
+        // .catch(error => {});
+
         fetch('/add/book', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(post_data) })
         .then(response => response.json())
         .then(data => {
